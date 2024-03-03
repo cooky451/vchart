@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Video Frame Charts</title>
+
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        overflow-y: scroll;
+        background-color: rgb(220, 220, 220);
+        font: 16px sans-serif;
+    }
+
+    body {
+        display: flex;
+        align-items: center;
+        align-content: center;
+        width: 100%;
+        margin: 0px;
+    }
+
+    input {
+        padding: 8px;
+    }
+
+    textarea {
+        padding: 8px;
+        min-width: 120px;
+    }
+
+    canvas {
+        padding: 16px;
+    }
+
+    .colbox {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+        align-items: center;
+        align-self: center;
+        gap: 8px;
+        width: 100%;
+        margin: 0px;
+    }
+  </style>
+</head>
+<body>
+    <div class="colbox">
+        <input type="file">
+        <label for="input-tbn">Video tbn:</label>
+        <input type="number" id="input-tbn">
+        <label for="input-framerate">Target framerate:</label>
+        <input type="number" id="input-framerate">
+        <label for="input-frametimes">Video timepoints:</label>
+        <textarea id="input-frametimes"></textarea>
+        <input type="button" id="input-draw" value="Draw Graph">
+        <canvas id="canvas-framechart"></canvas>
+        <p id="p-ideal-framerate"></p>
+        <canvas id="canvas-idealframechart"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+    <script src="vcharts.js?"></script>
+</body>
+</html>
