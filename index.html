@@ -17,6 +17,7 @@
         overflow-y: scroll;
         background-color: rgb(220, 220, 220);
         font: 16px sans-serif;
+        text-align: center;
     }
 
     body {
@@ -25,6 +26,10 @@
         align-content: center;
         width: 100%;
         margin: 0px;
+    }
+
+    p {
+        max-width: 600px;
     }
 
     input {
@@ -54,17 +59,39 @@
 </head>
 <body>
     <div class="colbox">
-        <input type="file">
+        <p>
+            <h4>How to use this tool</h4>
+            <p>
+                First, you need to install 
+                <a href="https://www.ffmpeg.org/download.html">ffmpeg</a>.
+                On Mac/Linux it could be as easy as using your packet manager.
+                For example "brew install ffmpeg" or "apt install ffmpeg".
+                On Windows, you need to download the binaries.
+            </p>
+            <p>
+                To find out the tbn of a video, just run 
+                <br><input type="text" value="ffprobe input.mov" disabled><br>
+                the tbn will be shown with the video stream information.
+                For reference, iPhone 15 uses tbn 600, Blackmagic Cam tbn 60000, 
+                Davinci Resolve generally 15360, and YouTube 1000.
+            </p>
+            <p>
+                To extract the timepoints from a video, run
+                <br><input type="text" value="ffprobe -v 0 -show_entries packet=pts -of compact=p=0:nk=1 -select_streams v input.mov > tmp.txt" disabled>
+                <br>this will write all the timepoints into the file tmp.txt in the current working directory.
+                Those need to be copied into the textarea below.
+            </p>
+        </p>
         <label for="input-tbn">Video tbn:</label>
         <input type="number" id="input-tbn">
         <label for="input-framerate">Target framerate:</label>
         <input type="number" id="input-framerate">
-        <label for="input-frametimes">Video timepoints:</label>
-        <textarea id="input-frametimes"></textarea>
+        <label for="input-pts">Video timepoints:</label>
+        <textarea id="input-pts"></textarea>
         <input type="button" id="input-draw" value="Draw Graph">
         <canvas id="canvas-framechart"></canvas>
         <p id="p-ideal-framerate"></p>
-        <canvas id="canvas-idealframechart"></canvas>
+        <canvas id="canvas-adjustedchart"></canvas>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>

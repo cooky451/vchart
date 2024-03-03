@@ -1,7 +1,4 @@
 
-let chart = null;
-let idealchart = null;
-
 function generateData(pts, tbn, framerate)
 {
     let last_frame_i = 0;
@@ -9,7 +6,7 @@ function generateData(pts, tbn, framerate)
     let frame_times = [];
     let frame_distances = [];
 
-    while (frame_time <= pts[pts.length - 1] && frame_times.length < 40000)
+    while (frame_time <= pts[pts.length - 1] && frame_times.length < 100000)
     {
         let dist = frame_time - pts[last_frame_i];
 
@@ -66,39 +63,48 @@ function makeChart(canvas, times, distances)
     });
 }
 
-function g1()
+let chart = null;
+let adjusted_chart = null;
+
+function updateCharts()
 {
-    const frametimes = document.getElementById("input-frametimes").value;
-    const pts = frametimes.split(/\s+/).map((v) => parseInt(v)).filter(
-        (v) => Number.isInteger(v)).sort((a, b) => a - b);
+    const pts = document.getElementById("input-pts").value.split(
+        /\s+/).map((v) => parseInt(v)).filter(
+            (v) => Number.isInteger(v)).sort((a, b) => a - b);
+
     const tbn = document.getElementById("input-tbn").value;
     const framerate = document.getElementById("input-framerate").value;
 
-    let framedata = generateData(pts, tbn, framerate);
+    const framedata = generateData(pts, tbn, framerate);
 
     if (chart)
     {
         chart.destroy();
     }
 
-    chart = makeChart(document.getElementById('canvas-framechart'), 
+    chart = makeChart(
+        document.getElementById('canvas-framechart'), 
         framedata.times, framedata.distances);
 
     const real_framerate = (pts.length - 1) / (pts[pts.length - 1] / tbn);
 
     const p = document.getElementById("p-ideal-framerate");
+
     p.innerHTML = "Ideal Framerate: " + real_framerate + 
-        "<br>Speed to reach target framerate: " + framerate / real_framerate * 100 + "%";
+        "<br>Speed to reach target framerate: " + 
+        framerate / real_framerate * 100 + "%";
 
-    framedata = generateData(pts, tbn, real_framerate);
+    const adjusted_data = generateData(pts, tbn, real_framerate);
 
-    if (idealchart)
+    if (adjusted_chart)
     {
-        idealchart.destroy();
+        adjusted_chart.destroy();
     }
 
-    idealchart = makeChart(document.getElementById('canvas-idealframechart'), 
-        framedata.times, framedata.distances);
+    adjusted_chart = makeChart(
+        document.getElementById('canvas-idealframechart'), 
+        adjusted_data.times, adjusted_data.distances);
 }
 
-document.getElementById("input-draw").addEventListener("click", () => g1());
+document.getElementById("input-draw").addEventListener(
+    "click", () => updateCharts());
