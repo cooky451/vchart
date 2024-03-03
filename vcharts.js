@@ -102,7 +102,7 @@ function updateCharts()
     }
 
     adjusted_chart = makeChart(
-        document.getElementById('canvas-idealframechart'), 
+        document.getElementById('canvas-adjustedchart'), 
         adjusted_data.times, adjusted_data.distances);
 }
 
