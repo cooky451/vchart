@@ -64,7 +64,8 @@
             <h4>How to use this tool</h4>
             <p>
                 First, you need to install 
-                <a href="https://www.ffmpeg.org/download.html">ffmpeg</a>.
+                <a href="https://www.ffmpeg.org/download.html" target="_blank">
+                    ffmpeg</a>.
                 On Mac/Linux it could be as easy as using your packet manager.
                 For example "brew install ffmpeg" or "apt install ffmpeg".
                 On Windows, you need to download the binaries.
@@ -81,6 +82,18 @@
                 <br><input type="text" value="ffprobe -v 0 -show_entries packet=pts -of compact=p=0:nk=1 -select_streams v input.mov > tmp.txt" disabled>
                 <br>this will write all the timepoints into the file tmp.txt in the current working directory.
                 Those need to be copied into the textarea below.
+            </p>
+
+            <p>
+                <a href="testdata-blackmagic-60fps.txt" target="_blank">
+                    Testdata from Blackmagic Cam, tbn 60000, target frame rate 60
+                </a><br>
+                <a href="testdata-iphone15-60fps.txt" target="_blank">
+                    Testdata from iPhone 15, tbn 600, target frame rate 60
+                </a><br>
+                <a href="testdata-iphone15-25fps.txt" target="_blank">
+                    Testdata from iPhone 15, tbn 600, target frame rate 60
+                </a>
             </p>
         </p>
         <label for="input-tbn">Video tbn:</label>
