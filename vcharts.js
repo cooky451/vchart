@@ -61,6 +61,32 @@ function generateData(pts, tbn, framerate)
     };
 }
 
+function getMinMaxDif(pts)
+{
+    let min = 99999;
+    let max = 0;
+
+    for (let i = 0; i + 1 < pts.length; ++i)
+    {
+        const dif = pts[i + 1] - pts[i];
+
+        if (dif < min)
+        {
+            min = dif;
+        }
+
+        if (dif > max)
+        {
+            max = dif;
+        }
+    }
+
+    return {
+        "min" : min,
+        "max" : max
+    };
+}
+
 function makeChart(canvas, times, distances)
 {
     const data = {
@@ -115,12 +141,19 @@ function updateCharts()
         framedata.times, framedata.distances);
 
     const real_framerate = (pts.length - 1) / (pts[pts.length - 1] / tbn);
+    const minmax = getMinMaxDif(pts);
 
     const p = document.getElementById("p-ideal-framerate");
 
     p.innerHTML = "Ideal Framerate: " + real_framerate + 
         "<br>Speed to reach target framerate: " + 
-        framerate / real_framerate * 100 + "%";
+        framerate / real_framerate * 100 + "%" + 
+        "<br>Min: " + minmax.min + ", " + 
+        minmax.min / tbn * 1000 + " ms, " +
+        1 / (minmax.min / tbn) + " FPS" +
+        "<br>Max: " + minmax.max + ", " + 
+        minmax.max / tbn * 1000 + " ms, " +
+        1 / (minmax.max / tbn) + " FPS";
 
     const adjusted_data = generateData(pts, tbn, real_framerate);
 
