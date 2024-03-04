@@ -1,4 +1,30 @@
 
+function compressPts(pts)
+{
+    let dict2 = {};
+
+    for (const p of pts)
+    {
+        const s = "" + p;
+
+        for (let i = 0; i + 1 < s.length; ++i)
+        {
+            const k = "" + s[i] + s[i + 1];
+
+            if (!(k in dict2))
+            {
+                dict2[k] = 0;
+            }
+
+            dict2[k] += 1;
+        }
+    }
+
+    console.log(dict2);
+    dict2 = Object.keys(dict2).sort((a, b) => dict2[b] - dict2[a]);
+    console.log(dict2);
+}
+
 function generateData(pts, tbn, framerate)
 {
     let last_frame_i = 0;
@@ -76,6 +102,8 @@ function updateCharts()
     const framerate = document.getElementById("input-framerate").value;
 
     const framedata = generateData(pts, tbn, framerate);
+
+    compressPts(pts);
 
     if (chart)
     {
