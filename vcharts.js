@@ -272,7 +272,7 @@ function updateCharts()
         adjusted_data.times, adjusted_data.distances);
 }
 
-const params = new URLSearchParams(window.location.href);
+const params = new URLSearchParams(window.location.search);
 
 if (params.has('tbn'))
 {
