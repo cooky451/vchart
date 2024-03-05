@@ -1,28 +1,124 @@
 
+const key_s = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
 function compressPts(pts)
 {
-    let dict2 = {};
-
-    for (const p of pts)
+    if (pts.length < 2)
     {
-        const s = "" + p;
+        return "";
+    }
 
-        for (let i = 0; i + 1 < s.length; ++i)
+    let base = pts[0];
+    let distances = [];
+    let unique_distances = {};
+    let unique_dist_arr = [];
+
+    for (let i = 0; i + 1 < pts.length; ++i)
+    {
+        const dist = pts[i + 1] - pts[i];
+        distances.push(dist);
+
+        if (!(dist in unique_distances))
         {
-            const k = "" + s[i] + s[i + 1];
+            unique_dist_arr.push(dist);
 
-            if (!(k in dict2))
+            if (unique_dist_arr.length > key_s.length)
             {
-                dict2[k] = 0;
+                return "";
             }
 
-            dict2[k] += 1;
+            unique_distances[dist] = key_s[unique_dist_arr.length - 1];
         }
     }
 
-    console.log(dict2);
-    dict2 = Object.keys(dict2).sort((a, b) => dict2[b] - dict2[a]);
-    console.log(dict2);
+    let s = "" + base + "," + unique_dist_arr + ",";
+    let cur_dist = distances[0];
+    let rep_counter = 0;
+
+    for (const dist of distances)
+    {
+        if (dist == cur_dist)
+        {
+            rep_counter += 1;
+        }
+        else
+        {
+            if (rep_counter > 1)
+            {
+                s += "" + rep_counter + unique_distances[cur_dist];
+            }
+            else
+            {
+                s += "" + unique_distances[cur_dist];
+            }
+            
+            rep_counter = 1;
+            cur_dist = dist;
+        }
+    }
+
+    if (rep_counter > 1)
+    {
+        s += "" + rep_counter + unique_distances[cur_dist];
+    }
+    else
+    {
+        s += "" + unique_distances[cur_dist];
+    }
+
+    console.log(s);
+
+    return s;
+}
+
+function decompressPts(s)
+{
+    s = s.split(',');
+
+    if (s.length < 3)
+    {
+        return [];
+    }
+
+    let base = parseInt(s[0]);
+    let distances = [];
+
+    for (let i = 1; i + 1 < s.length; ++i)
+    {
+        distances.push(s[i]);
+    }
+
+    let key_dict = {};
+
+    for (let i = 0; i < key_s.length; ++i)
+    {
+        key_dict[key_s[i]] = i;
+    }
+
+    const matches = 
+        [...s[s.length - 1].matchAll(/([0-9]{0,5})([a-zA-Z]{1})/gm)];
+
+    console.log(matches);
+
+    let pts = "" + base + "\r\n";
+
+    for (const m of matches)
+    {
+        let reps = 1;
+
+        if (m[1].length > 0)
+        {
+            reps = parseInt(m[1]);
+        }
+
+        while (reps--)
+        {
+            base += parseInt(distances[key_dict[m[2]]]);
+            pts += base + "\r\n";
+        }
+    }
+
+    return pts;
 }
 
 function generateData(pts, tbn, framerate)
@@ -118,18 +214,27 @@ function makeChart(canvas, times, distances)
 let chart = null;
 let adjusted_chart = null;
 
+const input_tbn = document.getElementById("input-tbn");
+const input_fps = document.getElementById("input-framerate");
+const input_pts = document.getElementById("input-pts");
+const input_sharelink = document.getElementById("input-sharelink");
+
 function updateCharts()
 {
-    const pts = document.getElementById("input-pts").value.split(
+    const pts = input_pts.value.split(
         /\s+/).map((v) => parseInt(v)).filter(
             (v) => Number.isInteger(v)).sort((a, b) => a - b);
 
-    const tbn = document.getElementById("input-tbn").value;
-    const framerate = document.getElementById("input-framerate").value;
+    const tbn = input_tbn.value;
+    const framerate = input_fps.value;
 
     const framedata = generateData(pts, tbn, framerate);
 
-    compressPts(pts);
+    input_sharelink.value = 
+        window.location.href.split('?')[0] + 
+        "?tbn=" + tbn + 
+        "&fps=" + framerate + 
+        "&pts=" + compressPts(pts);
 
     if (chart)
     {
@@ -165,6 +270,23 @@ function updateCharts()
     adjusted_chart = makeChart(
         document.getElementById('canvas-adjustedchart'), 
         adjusted_data.times, adjusted_data.distances);
+}
+
+const params = new URLSearchParams(window.location.href);
+
+if (params.has('tbn'))
+{
+    input_tbn.value = params.get('tbn');
+}
+
+if (params.has('fps'))
+{
+    input_fps.value = params.get('fps');
+}
+
+if (params.has('pts'))
+{
+    input_pts.value = decompressPts(params.get('pts'));
 }
 
 document.getElementById("input-draw").addEventListener(
